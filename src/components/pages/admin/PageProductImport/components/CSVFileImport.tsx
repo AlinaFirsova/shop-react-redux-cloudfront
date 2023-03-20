@@ -1,3 +1,4 @@
+//@ts-nocheck
 import axios from "axios";
 import React from "react";
 import Typography from "@mui/material/Typography";
@@ -26,12 +27,18 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   const uploadFile = async () => {
     console.log("uploadFile to", url);
 
+    const headers = {};
+    const authorizationToken = localStorage.getItem('authorization_token');
+
+    if (authorizationToken) headers.Authorization = `Basic ${authorizationToken}`;
+
     const response = await axios({
       method: "GET",
       url,
       params: {
         name: encodeURIComponent(String(file?.name)),
       },
+      headers
     });
     console.log("File to upload: ", file?.name);
     console.log("Uploading to: ", response.data);

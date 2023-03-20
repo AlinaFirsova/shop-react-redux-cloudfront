@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "~/components/App/App";
@@ -13,6 +14,25 @@ const queryClient = new QueryClient({
     queries: { refetchOnWindowFocus: false, retry: false, staleTime: Infinity },
   },
 });
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const {
+      response: {
+        status,
+        data: { message },
+      },
+    } = error;
+
+    if (status === 401 || status === 403) {
+      alert(message);
+    }
+    return Promise.reject(error.response);
+  }
+);
 
 if (import.meta.env.DEV) {
   const { worker } = await import("./mocks/browser");
